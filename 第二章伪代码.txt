@@ -1,0 +1,16 @@
+#define OK 1
+#define ERREOR -1
+#define MAX_SIZE 100
+typedef int Satatus;
+typedef int ElemType;
+typedef struct sqlist
+   {	ElemType Elem_arrayP[MAX_SIZE];
+	int  length;
+    }SqList;
+
+顺序线性表初始化
+Status Inint_SqList(SqList*L)
+   { L->elem_arry=（ElemType*）malloc（MAX_SIZE*sizeof（ElemType））;
+     if（！L-〉elem_array）retun ERROR
+     else{L-＞length=0;retun ERROR}
+    }
