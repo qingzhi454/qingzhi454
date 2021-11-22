@@ -1,256 +1,125 @@
-#include<stdlib.h>
-#include<stdio.h>
-#include<malloc.h>
-#include<windows.h>
-typedef struct stu
+#include <stdio.h>
+#include <stdlib.h>
+typedef int elemtype;
+typedef struct LinkedStackNode 
+{	
+	elemtype data;
+	struct LinkedStackNode * next;
+} LinkedStackNode, * LinkedStack;                                  
+  LinkedStack top;
+
+//初始化
+LinkedStack Init_LinkedStack()                                       
+{	
+	LinkedStack top=(LinkedStackNode * )malloc (sizeof( LinkedStackNode));
+	if(top!=NULL)//申请空间成功
+	top->next=NULL;//设置栈顶指针为空
+	return top;
+}
+
+//判栈空
+int LinkedStack_Empty(LinkedStack top)                            
+{	
+	if(top->next==NULL)//检查栈顶指针的值 
+	{
+		return 1;//栈S为空，函数返回1
+	}	
+	else
+	{
+		return 0;
+	}
+}
+
+//入栈
+int Push_LinkedStack(LinkedStack top,elemtype x)                     
+	//插入数据元素x为新的栈顶元素
+{	
+	LinkedStackNode * node;
+	node=(LinkedStackNode * )malloc(sizeof(LinkedStackNode));
+	if(node==NULL)
+	{
+		return 0;//申请结点空间失败,插入失败，函数返回0
+	}
+	else
+	{
+		node->data=x;//设置新结点的数据域
+		node->next=top->next;//设置新结点的指针城
+		top->next=node;//设置头结点指针城指向新的栈顶元素
+		return 1;//插入成功，函数返回1
+	}
+}
+
+//求栈长
+int Length_LinkedStack(LinkedStack top)                                       
 {
-	int num;
-	char name[20];
-	float score;
-	struct stu *pnext;
-}ints;
-ints *pHead=NULL;
-int n=0;
-int Repeat(ints *pnew)
-{
-	ints *phead=pHead;
-	if (pHead==NULL)
+	int count = 0;
+	while(top->next!=NULL) 
+	{
+		++count;
+		top=top->next;
+	}
+	return count;
+}
+
+//出栈
+int Pop_LinkedStack(LinkedStack top, elemtype *x)                    
+{	LinkedStackNode * node;
+	if(top->next==NULL)
+	{
+		return 0;
+	}
+	else
+	{
+		node=top->next;//将原栈顶数据元素弹出并赋给node
+		*x=node->data;//将原栈顶数据元素的数据赋值给x
+		top->next=node->next;//top指向链栈中的下一个数据元素
+		free (node);//释放原栈顶数据元素所占的空间
 		return 1;
-	while(1)
-	{
-		if(phead->num==pnew->num)
-		{
-			printf("学号已存在,请检查后重新输入!\n");
-			return 0;
-		}
-		if(phead->pnext!=NULL)
-		{
-			phead=phead->pnext;
-		}
-		else
-			break;
 	}
-	return 1;
+}  
+
+//取栈顶元素
+int GetTop_LinkedStack(LinkedStack top)                
+{ 
+	if(top->next)
+      {
+            return top->next->data;
+
+      }
+      return -1;
 }
-void create()
+
+//主函数
+void main()
 {
-	ints *phead=NULL;
-	ints *pnew=NULL;
-	ints *ptail=NULL;
-	ptail=phead;
-	printf("请根据提示输入成员相关信息:\n");
-	while(1)
+	int i,t,x,a[20];
+	LinkedStack top=Init_LinkedStack();//初始化栈
+	x=LinkedStack_Empty(top);//判栈空结果赋值给X
+	if(x=0)
 	{
-		pnew=(ints *)malloc(sizeof(ints));
-		pnew->pnext=NULL;
-		printf("请输入第%d位成员的学号：若输入完毕则输入0完成录入\n",n+1);
-		scanf("%d",&pnew->num);
-		if (pnew->num==0)
-		{
-			free(pnew);
-			break;
-		}
-		if (Repeat(pnew)==0)
-			continue;
-		printf("请输入第%d位成员的姓名：\n",n+1);
-		scanf("%s",pnew->name);
-		printf("请输入第%d位成员的成绩：\n",n+1);
-		scanf("%f",&pnew->score);
-		if(phead==NULL)
-		{
-			phead=pnew;
-			ptail=pnew;
-		}
-		else
-		{
-			ptail->pnext=pnew;
-			ptail=pnew;
-		}
-		n+=1;
-		pHead=phead;
+		printf("栈为空\n");
 	}
-	printf("创建成功!\n");
+
+	printf("请依次输入5个数,开始入栈：\n");
+	for(i=0;i<5;i++) 
+	{
+		scanf("%d",&a[i]);
+		Push_LinkedStack(top,a[i]);
+		x=GetTop_LinkedStack(top);
+		if(x!=-1)
+		{
+			printf("当前栈顶元素为%d\n",x);
+		}
+	}
+	printf("入栈结束\n");
+	printf("栈长为%d\n",Length_LinkedStack(top));
+	printf("开始出栈:\n");
+	for (i=0;i<5;i++)
+	{
+		Pop_LinkedStack(top,&t);
+        printf("%d",t);
+	}
+	printf("\n");
+	printf("出栈后栈长为%d\n",Length_LinkedStack(top));
 }
-void insert(ints *phead)
-{
-	int N;
-	ints *pnew=(ints *)malloc(sizeof(ints));
-	pnew->pnext=NULL;
-	ints *ptemp=phead;
-	ints *pold=NULL;
-	while(1)
-	{
-		printf("请输入插入位置:(0->%d)\n",n);
-		scanf("%d",&N);
-		if(N<0||N>n)
-		{
-			printf("请输入有效数字!\n");
-			continue;
-		}
-		else
-			break;
-	}
-	while(1)
-	{
-		printf("请输入该成员的学号:\n");
-		scanf("%d",&pnew->num);
-		if(pnew->num==0)
-			printf("学号不合法!请重新输入!\n");
-		else if(Repeat(pnew)==0)
-		{
-			printf("*****\n");
-			continue;
-		}
-		else
-			break;
-	}
-	printf("请输入该成员的姓名：\n");
-	scanf("%s",pnew->name);
-	printf("请输入该成员的成绩：\n");
-	scanf("%f",&pnew->score);
-	for(int i=1;i<N;i++)
-		ptemp=ptemp->pnext;
-	pold=ptemp->pnext;
-	if(N==0)
-	{
-		pnew->pnext=phead;
-		pHead=pnew;
-	}
-	else if(N==n)
-		ptemp->pnext=pnew;
-	else if(N>0&&N<n)
-	{
-			pnew->pnext=pold;
-			ptemp->pnext=pnew;
-	}
-	n+=1;
-	printf("插入成功!\n");
-}
-void del(ints *head)
-{
-	int N;
-	ints *pdd=head;
-	ints *ptemp=head;
-	while(1)
-	{
-		printf("请输入删除位置(1->%d)：\n",n);
-		scanf("%d",&N);
-		if(N<1||N>n)
-		{
-			printf("请输入有效数字");
-			continue;
-		}
-		else
-		   break;
-	}
-	for(int i=1;i<N-1;i++)
-	  ptemp=ptemp->pnext;
-	pdd=ptemp->pnext;
-	if(N>1&&N<n)
-	{
-	  pdd=ptemp->pnext;
-	  ptemp->pnext=pdd->pnext;
-	  pdd->pnext=NULL;
-	  free(pdd);
-	}
-	else if(N==n)
-	   {
-	   	ptemp->pnext=NULL;
-	   	free(pdd);
-	   }
-	 else if(N==1)
-	{
-		pHead=ptemp->pnext;
-		ptemp->pnext=NULL;
-		free(ptemp);
-	}
-	n-=1;
-	printf("删除成功!\n");
-}
-void Print(ints *ptemp)
-{
-	printf("当前所有成员信息如下:\n");
-	printf("学号\t姓名\t成绩\t\n");
-	while(ptemp->pnext!=NULL)
-	{
-		printf("%d\t%s\t%.2f\n",ptemp->num,ptemp->name,ptemp->score);
-		ptemp=ptemp->pnext;
-	}
-	printf("%d\t%s\t%.2f\n",ptemp->num,ptemp->name,ptemp->score);
-}
-int Menu()
-{
-	int key1;
-	printf("******欢迎来到链表学习********\n");
-	printf("(1),创建初始链表\n");
-	printf("(2),添加成员\n");
-	printf("(3),删除成员\n");
-	printf("(4),显示所有数据\n");
-	printf("(0),退出\n");
-	printf("当前有%d名成员\n",n);
-	printf("******************************\n");
-	while(1)
-	{
-		printf("请输入指令:\n");
-		scanf("%d",&key1);
-		if (key1 > 1 && key1 < 5 && n==0)
-			printf("还没有成员,请先创建初始链表!\n");
-		else
-			break;
-	}
-	switch(key1)
-	{
-		case 0 :
-		{
-			printf("********欢迎下次使用**********\n");
-			return 0;
-			break;
-		}
-		case 1 :
-		{
-			create();
-			system("pause");
-			return 7;
-			break;
-		}
-		case 2 :
-		{
-			insert(pHead);
-			system("pause");
-			return 2;
-			break;
-		}
-		case 3 :
-		{
-			del(pHead);
-			system("pause");
-			return 3;
-			break;
-		}
-		case 4 :
-		{
-			Print(pHead);
-			system("pause");
-			return 4;
-			break;
-		}
-		default :
-		{
-			printf("输入错误");
-			Sleep(1800);
-			return 5;
-			break;
-		}
-	}
-}
-int main()
-{
-	int key2=1;
-	while(key2!=0)
-	{
-		system("CLS");
-		key2=Menu();
-	}
-	free(pHead);
-	return 0;
-}
+
